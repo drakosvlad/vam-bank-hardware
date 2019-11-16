@@ -4,7 +4,7 @@
 
 AnalogKeyboard::AnalogKeyboard(const uint8_t pin) : _pin(pin)
 {
-
+  analogReadResolution(12);
 }
 
 AnalogKeyboard::~AnalogKeyboard()
@@ -14,9 +14,10 @@ AnalogKeyboard::~AnalogKeyboard()
 
 void AnalogKeyboard::loop()
 {
-  analogReadResolution(12);
+  //static int i(0);
   const uint16_t newValue = analogRead(_pin);
-  Serial1.println(newValue);
+  //if (i++ % 10 == 0)
+  //  Serial1.println(newValue);
   
   if (newValue < KEY_BOUNDS[0] && 
       _value > KEY_BOUNDS[0] && 
@@ -24,7 +25,6 @@ void AnalogKeyboard::loop()
   {
     // Key press finished, registering key press
     uint8_t key = getKeyByLevel(_value);
-    Serial1.println(key);
     if (_processor != nullptr)
       _processor->press(key);
   }

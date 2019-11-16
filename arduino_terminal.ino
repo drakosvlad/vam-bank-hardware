@@ -7,12 +7,12 @@
 #include "DisplayKeyboardProcessor.h"
 
 #define RST_PIN         9          // Configurable, see typical pin layout above
-#define SS_PIN          10         // Configurable, see typical pin layout above
+#define SS_PIN          7         // Configurable, see typical pin layout above
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 LiquidCrystal_I2C lcd(0x27,16,2); 
 KeyboardConverter kc;
-DisplayKeyboardProcessor dkp(lcd);
+DisplayKeyboardProcessor dkp(lcd, mfrc522, 5);
 
 AnalogKeyboard kbd(A1);
 
@@ -22,8 +22,6 @@ void setup() {
   lcd.backlight();
   Serial.begin(9600);   // Initialize serial communications with the PC
   Serial1.begin(9600);
-  Serial.println("Kek mda");
-  Serial1.println("Kek mda");
   SPI.begin();      // Init SPI bus
   
   mfrc522.PCD_Init();   // Init MFRC522
@@ -33,8 +31,6 @@ void setup() {
   
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("Rdr initialized");
-  Serial1.println(F("Scan PICC to see UID, SAK, type, and data blocks..."));
   dkp.init();
   kbd.connectTo(kc);
   kc.connectTo(dkp);
@@ -76,5 +72,6 @@ void loop() {
     lcd.print(t);
     delete[] t;
   }*/
-  kbd.loop();   
+  kbd.loop();
+  dkp.loop();
 }
